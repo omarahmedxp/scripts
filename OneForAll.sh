@@ -14,8 +14,8 @@ fi
 
 mkdir -p ~/bugbounty/$DOMAIN
 cd ~/bugbounty/$DOMAIN
-rm -f naabu_out.txt live_urls.txt nuclei_results.txt
-touch naabu_out.txt live_urls.txt nuclei_results.txt
+rm -f naabu_out.txt live_urls.txt
+touch naabu_out.txt live_urls.txt
 
 echo -e "${BLUE}[+] Starting Recon on: $DOMAIN${NC}"
 
