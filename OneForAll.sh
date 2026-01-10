@@ -41,15 +41,6 @@ naabu -list live_subs.txt -c 50 -top-ports 1000 -silent -o naabu_out.txt
 
 echo -e "${GREEN}[*] Probing with httpx...${NC}"
 
-cat naabu_out.txt | httpx -silent -sc -title -td -o live_urls.txt
-
-echo -e "${GREEN}[*] Running Nuclei Scan (Smart Mode)...${NC}"
-
-
-nuclei -l live_urls.txt \
-       -s critical,high,medium \
-       -t cves/ -t vulnerabilities/ -t exposures/ -t misconfiguration/ -t default-logins/ \
-       -rl 50 \
-       -o nuclei_results.txt
+cat naabu_out.txt | httpx -mc 200,301,302,403,404 -silent -status-code -random-agent -title -td -o live_urls.txt
 
 echo -e "${BLUE}[+] Recon Finished! Check the folder: ~/bugbounty/$DOMAIN${NC}"
