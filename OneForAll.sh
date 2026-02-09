@@ -23,7 +23,7 @@ echo -e "${GREEN}[*] Running Subfinder...${NC}"
 subfinder -d $DOMAIN -all -recursive -silent -o subfinder_subs.txt
 
 echo -e "${GREEN}[*] Running Assetfinder...${NC}"
-assetfinder --subs-only $DOMAIN >> assetfinder_subs.txt
+assetfinder --subs-only $DOMAIN | grep "$DOMAIN" >> assetfinder_subs.txt
 
 echo -e "${GREEN}[*] Merging and cleaning subdomains...${NC}"
 cat subfinder_subs.txt assetfinder_subs.txt | sort -u > all_subs.txt
@@ -41,6 +41,21 @@ naabu -list live_subs.txt -c 50 -top-ports 1000 -silent -o naabu_out.txt
 
 echo -e "${GREEN}[*] Probing with httpx...${NC}"
 
-cat naabu_out.txt | httpx -mc 200,301,302,403,404 -silent -status-code -random-agent -title -td -o live_urls.txt
 
-echo -e "${BLUE}[+] Recon Finished! Check the folder: ~/bugbounty/$DOMAIN${NC}"
+httpx -l naabu_out.txt -mc 200,301,302,403,404 -silent -sc -cl -td -title -random-agent -o httpx_all.txt
+
+grep "\[200\]" httpx_all.txt > 200.txt
+grep "\[403\]" httpx_all.txt > 403.txt
+awk '{print $1}' 200.txt > nuclei_targets.txt
+
+if [ -s nuclei_targets.txt ]; then
+    echo -e "${GREEN}[*] Running Nuclei on 200 OK targets...${NC}"
+    nuclei -l nuclei_targets.txt -t ~/Pixelated-Nuclei-Templates/ -silent -o nuclei_results.txt
+else
+    echo -e "${RED}[!] No 200 OK targets found for Nuclei.${NC}"
+fi
+
+echo -e "${BLUE}[+] Recon Finished!${NC}"
+echo -e "${GREEN}[*] Total 200 OK found: $(wc -l < 200.txt)${NC}"
+echo -e "${RED}[*] Total 403 Forbidden found: $(wc -l < 403.txt)${NC}"
+echo -e "${BLUE}[+] Results saved in: ~/bugbounty/$DOMAIN${NC}"
