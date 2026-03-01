@@ -37,7 +37,7 @@ cat dnsx_full_info.txt | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | sort -u > 
 echo -e "${BLUE}[+] Live subdomains: $(wc -l < live_subs.txt)${NC}"
 
 echo -e "${GREEN}[*] Running Naabu Port Scan...${NC}"
-naabu -list live_subs.txt -c 50 -top-ports 2000 -silent -o naabu_out.txt
+naabu -list live_subs.txt -c 50 -top-ports 1000 -silent -o naabu_out.txt
 sort -u naabu_out.txt -o naabu_out.txt
 
 echo -e "${GREEN}[*] Probing with httpx...${NC}"
