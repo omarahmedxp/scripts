@@ -43,11 +43,10 @@ sort -u naabu_out.txt -o naabu_out.txt
 echo -e "${GREEN}[*] Probing with httpx...${NC}"
 
 
-httpx -l naabu_out.txt -mc 200,301,302,403,404,401,405 -silent -sc -cl -td -title -random-agent -o final_targets.txt
+httpx -l naabu_out.txt -silent -sc -cl -title -random-agent -o all_http.txt
 
-grep "\[200\]" final_targets.txt > 200.txt
-grep "\[403\]" final_targets.txt > 403.txt
-awk '{print $1}' final_targets.txt > nuclei_targets.txt
+grep -E "\[(200|401|403|404|405)\]" all_http.txt > manual.txt
+awk '{print $1}' all_http.txt | sort -u > nuclei_targets.txt
 
 if [ -s nuclei_targets.txt ]; then
     echo -e "${GREEN}[*] Running Nuclei on discovered HTTP services...${NC}"
@@ -57,6 +56,4 @@ else
 fi
 
 echo -e "${BLUE}[+] Recon Finished!${NC}"
-echo -e "${GREEN}[*] Total 200 OK found: $(wc -l < 200.txt)${NC}"
-echo -e "${RED}[*] Total 403 Forbidden found: $(wc -l < 403.txt)${NC}"
 echo -e "${BLUE}[+] Results saved in: ~/bugbounty/$DOMAIN${NC}"
