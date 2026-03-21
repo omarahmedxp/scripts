@@ -45,7 +45,7 @@ echo -e "${GREEN}[*] Probing with httpx...${NC}"
 
 httpx -l naabu_out.txt -silent -sc -cl -title -random-agent -o all_http.txt
 
-grep -E "\[(200|401|403|404|405)\]" all_http.txt > manual.txt
+grep -E "\[(200|302|307|308|401|403|404|405|500)\]" all_http.txt > manual.txt
 awk '{print $1}' all_http.txt | sort -u > nuclei_targets.txt
 
 if [ -s nuclei_targets.txt ]; then
